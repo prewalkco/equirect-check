@@ -2,6 +2,8 @@
 
 Validate that a 360° panorama is a true **2:1 equirectangular** image (or **1:1 top-bottom stereo**) before you upload it to a virtual tour. Works in the browser, in Node and from the command line.
 
+Built by **[Prewalk](https://prewalk.co)**, 360° virtual tour software for real estate and architecture. We use the same check before every upload to [prewalk.co](https://prewalk.co).
+
 **Try it in your browser:** https://prewalk-co.github.io/equirect-check/ (files never leave your computer)
 
 ## Why this matters
@@ -59,6 +61,10 @@ The command exits with code 1 when any file fails, so you can use it in CI or a 
 - **360° cameras:** export a stitched equirectangular image from the camera app, not the raw dual-fisheye file.
 - **3D software:** render with a spherical / equirectangular camera and set the output to an exact 2:1 resolution.
 - **Stereo VR:** stack the left and right eye 2:1 images top-bottom into one 1:1 file.
+
+## Next step: turn your panoramas into a tour
+
+Once your images pass, upload them to **[prewalk.co](https://prewalk.co)** and get a 360° virtual tour buyers walk room by room from one link, with an embed code for your website. The Free plan includes 30 scenes at up to 8K.
 
 ## Further reading
 

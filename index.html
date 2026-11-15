@@ -22,11 +22,16 @@
   .ok { color:var(--ok); } .bad { color:var(--bad); }
   h2 { font-size:1.15rem; margin:36px 0 8px; }
   a { color:var(--accent); }
+  .brand { margin:0 0 12px; font-weight:600; } .brand a { text-decoration:none; }
+  .cta { margin:24px 0 0; padding:18px; border:1px solid var(--line); border-radius:12px; }
+  .cta .btn { display:inline-block; margin-top:10px; padding:10px 16px; border-radius:8px; background:var(--accent); color:#fff; text-decoration:none; font-weight:600; }
+  @media (prefers-color-scheme: dark) { .cta .btn { color:#111; } }
   footer { margin-top:40px; color:var(--muted); font-size:.9rem; }
 </style>
 </head>
 <body>
 <main>
+  <p class="brand"><a href="https://prewalk.co">Prewalk</a> · free tool</p>
   <h1>360° Panorama Checker</h1>
   <p class="lead">Check that an image is a true 2:1 equirectangular panorama before you upload it to a virtual tour. The check runs in your browser; your files never leave your computer.</p>
 
@@ -36,12 +41,19 @@
   </div>
   <label class="opt"><input type="checkbox" id="stereo"> Top-bottom stereo (each eye 2:1, whole file 1:1)</label>
   <ul id="out" aria-live="polite"></ul>
+  <aside class="cta" id="cta" hidden>
+    <strong>Panoramas ready?</strong> Turn them into a 360° virtual tour buyers walk room by room from one link, with an embed code for your website.
+    <a class="btn" href="https://prewalk.co">Create a free tour on prewalk.co →</a>
+  </aside>
 
   <h2>Why exactly 2:1?</h2>
   <p>An equirectangular image maps 360° horizontally and 180° vertically onto a flat rectangle, so a full sphere is always exactly twice as wide as it is tall: 8192 × 4096, 16384 × 8192 and so on. An image that is close to 2:1 is usually a crop or a partial panorama, and it will look stretched or show a gap at the top or bottom in a 360° viewer.</p>
 
   <h2>Common fixes</h2>
   <p>Export from your 360° camera app as a stitched equirectangular image, not a dual-fisheye file. In 3D software, render with a spherical or equirectangular camera and set the output to an exact 2:1 resolution. For top-bottom stereo VR, stack the left and right eye 2:1 images into one 1:1 file.</p>
+
+  <h2>Next step</h2>
+  <p>When your panoramas pass, upload them to <a href="https://prewalk.co">Prewalk</a> to build a 360° virtual tour: connect rooms by dragging, add info points, and share one link or embed it on your website. Tours open in the browser on phones, computers and Meta Quest, with images up to 16K.</p>
 
   <footer>
     Open source (MIT) on <a href="https://github.com/prewalk-co/equirect-check">GitHub</a>, with Node and command-line versions.
@@ -57,6 +69,7 @@
 
   async function handle(files) {
     out.innerHTML = '';
+    let anyOk = false;
     for (const f of files) {
       const li = document.createElement('li');
       li.textContent = f.name + ': checking…';
@@ -64,12 +77,13 @@
       try {
         const r = await checkPanorama(f, { stereo: stereo.checked });
         if (r.checkedOnServer) { li.textContent = `${f.name}: TIFF can't be checked in the browser. Use the Node or CLI version.`; }
-        else if (r.ok) { li.className = 'ok'; li.textContent = `✔ ${f.name}: ${r.width} × ${r.height}, looks good.`; }
+        else if (r.ok) { anyOk = true; li.className = 'ok'; li.textContent = `✔ ${f.name}: ${r.width} × ${r.height}, looks good.`; }
         else { li.className = 'bad'; li.textContent = `✘ ${f.name}: ${r.reason}`; }
       } catch (e) {
         li.className = 'bad'; li.textContent = `✘ ${f.name}: could not read this file (${e.message}).`;
       }
     }
+    document.getElementById('cta').hidden = !anyOk;
   }
   drop.addEventListener('click', () => input.click());
   drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
