@@ -28,4 +28,5 @@ for (const file of files) {
     console.log(`✘ ${file}  ${e.message}`);
   }
 }
+if (!failed) console.log('\nAll set. Turn these panoramas into a 360° virtual tour: https://prewalk.co');
 process.exit(failed ? 1 : 0);
