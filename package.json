@@ -1,0 +1,18 @@
+{
+  "name": "equirect-check",
+  "version": "1.0.0",
+  "description": "Validate that a 360° panorama is a true 2:1 equirectangular image (or 1:1 top-bottom stereo) before upload. Browser, Node and CLI.",
+  "type": "module",
+  "exports": {
+    ".": "./src/node.js",
+    "./browser": "./src/browser.js"
+  },
+  "bin": { "equirect-check": "bin/equirect-check.js" },
+  "files": ["src", "bin"],
+  "dependencies": { "sharp": "^0.33.0" },
+  "keywords": ["360", "panorama", "equirectangular", "virtual-tour", "vr", "stereo", "validation", "sharp"],
+  "homepage": "https://github.com/prewalk-co/equirect-check",
+  "repository": { "type": "git", "url": "https://github.com/prewalk-co/equirect-check.git" },
+  "author": "Prewalk (https://prewalk.co)",
+  "license": "MIT"
+}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>360° Panorama Checker: is your image a true 2:1 equirectangular?</title>
+<meta name="description" content="Free in-browser check for 360° panoramas: confirms an image is a true 2:1 equirectangular (or 1:1 top-bottom stereo) before you upload it to a virtual tour. Nothing leaves your computer.">
+<link rel="canonical" href="https://prewalk-co.github.io/equirect-check/">
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#1c1c1e; --muted:#6b6b70; --line:#d9d9de; --ok:#1a7f37; --bad:#c2410c; --accent:#6d28d9; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111113; --fg:#f2f2f3; --muted:#a1a1a8; --line:#2e2e33; --ok:#4ade80; --bad:#fb923c; --accent:#a78bfa; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 1.7rem; line-height:1.25; margin:0 0 8px; }
+  p.lead { color:var(--muted); margin:0 0 24px; }
+  #drop { border:2px dashed var(--line); border-radius:12px; padding:36px 16px; text-align:center; cursor:pointer; }
+  #drop.over { border-color:var(--accent); }
+  label.opt { display:inline-flex; gap:8px; align-items:center; margin:16px 0; color:var(--muted); }
+  ul#out { list-style:none; padding:0; margin:16px 0 0; }
+  ul#out li { padding:10px 0; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  h2 { font-size:1.15rem; margin:36px 0 8px; }
+  a { color:var(--accent); }
+  footer { margin-top:40px; color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>360° Panorama Checker</h1>
+  <p class="lead">Check that an image is a true 2:1 equirectangular panorama before you upload it to a virtual tour. The check runs in your browser; your files never leave your computer.</p>
+
+  <div id="drop" tabindex="0" role="button" aria-label="Choose panorama files">
+    <strong>Drop panoramas here</strong><br>or click to choose JPG, PNG or WebP files
+    <input id="file" type="file" accept="image/jpeg,image/png,image/webp,image/tiff" multiple hidden>
+  </div>
+  <label class="opt"><input type="checkbox" id="stereo"> Top-bottom stereo (each eye 2:1, whole file 1:1)</label>
+  <ul id="out" aria-live="polite"></ul>
+
+  <h2>Why exactly 2:1?</h2>
+  <p>An equirectangular image maps 360° horizontally and 180° vertically onto a flat rectangle, so a full sphere is always exactly twice as wide as it is tall: 8192 × 4096, 16384 × 8192 and so on. An image that is close to 2:1 is usually a crop or a partial panorama, and it will look stretched or show a gap at the top or bottom in a 360° viewer.</p>
+
+  <h2>Common fixes</h2>
+  <p>Export from your 360° camera app as a stitched equirectangular image, not a dual-fisheye file. In 3D software, render with a spherical or equirectangular camera and set the output to an exact 2:1 resolution. For top-bottom stereo VR, stack the left and right eye 2:1 images into one 1:1 file.</p>
+
+  <footer>
+    Open source (MIT) on <a href="https://github.com/prewalk-co/equirect-check">GitHub</a>, with Node and command-line versions.
+    Made by <a href="https://prewalk.co">Prewalk</a>, 360° virtual tour software for real estate and architecture.
+  </footer>
+</main>
+<script type="module">
+  import { checkPanorama } from './src/browser.js';
+  const drop = document.getElementById('drop');
+  const input = document.getElementById('file');
+  const out = document.getElementById('out');
+  const stereo = document.getElementById('stereo');
+
+  async function handle(files) {
+    out.innerHTML = '';
+    for (const f of files) {
+      const li = document.createElement('li');
+      li.textContent = f.name + ': checking…';
+      out.appendChild(li);
+      try {
+        const r = await checkPanorama(f, { stereo: stereo.checked });
+        if (r.checkedOnServer) { li.textContent = `${f.name}: TIFF can't be checked in the browser. Use the Node or CLI version.`; }
+        else if (r.ok) { li.className = 'ok'; li.textContent = `✔ ${f.name}: ${r.width} × ${r.height}, looks good.`; }
+        else { li.className = 'bad'; li.textContent = `✘ ${f.name}: ${r.reason}`; }
+      } catch (e) {
+        li.className = 'bad'; li.textContent = `✘ ${f.name}: could not read this file (${e.message}).`;
+      }
+    }
+  }
+  drop.addEventListener('click', () => input.click());
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+  input.addEventListener('change', () => handle(input.files));
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); handle(e.dataTransfer.files); });
+</script>
+</body>
+</html>
