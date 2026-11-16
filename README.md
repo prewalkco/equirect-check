@@ -4,7 +4,7 @@ Validate that a 360° panorama is a true **2:1 equirectangular** image (or **1:1
 
 Built by **[Prewalk](https://prewalk.co)**, 360° virtual tour software for real estate and architecture. We use the same check before every upload to [prewalk.co](https://prewalk.co).
 
-**Try it in your browser:** https://prewalk-co.github.io/equirect-check/ (files never leave your computer)
+**Try it in your browser:** https://prewalkco.github.io/equirect-check/ (files never leave your computer)
 
 ## Why this matters
 
@@ -45,8 +45,8 @@ await checkFile('suite-tb.jpg', { stereo: true, maxWidth: 8192 });
 ## Command line
 
 ```bash
-npx github:prewalk-co/equirect-check renders/*.jpg
-npx github:prewalk-co/equirect-check --stereo --max-width 8192 vr/*.jpg
+npx github:prewalkco/equirect-check renders/*.jpg
+npx github:prewalkco/equirect-check --stereo --max-width 8192 vr/*.jpg
 ```
 
 ```

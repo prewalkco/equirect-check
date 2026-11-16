@@ -11,8 +11,8 @@
   "files": ["src", "bin"],
   "dependencies": { "sharp": "^0.33.0" },
   "keywords": ["360", "panorama", "equirectangular", "virtual-tour", "vr", "stereo", "validation", "sharp"],
-  "homepage": "https://github.com/prewalk-co/equirect-check",
-  "repository": { "type": "git", "url": "https://github.com/prewalk-co/equirect-check.git" },
+  "homepage": "https://github.com/prewalkco/equirect-check",
+  "repository": { "type": "git", "url": "https://github.com/prewalkco/equirect-check.git" },
   "author": "Prewalk (https://prewalk.co)",
   "license": "MIT"
 }
